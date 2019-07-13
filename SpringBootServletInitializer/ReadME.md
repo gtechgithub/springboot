@@ -24,6 +24,56 @@ It extends from SpringBootServletInitializer so that it can be deployed as a WAR
 The application can be run both by deploying the WAR on a Tomcat server and executing 
 it as a self-executable web archive with embedded Tomcat.
 
+```
+@PropertySource("classpath:application.properties")
+@EnableJpaRepositories(basePackages = {"springbatch.batch"})
+@SpringBootApplication
+public class App extends SpringBootServletInitializer 
+{
+	
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(App.class);
+    }
+	
+    @Bean
+    public AppCommandRunner schedulerRunner() {
+        return new AppCommandRunner();
+    }
+    
+    public static void main( String[] args )
+    {
+        SpringApplication.run(App.class, args);
+    }
+}
+
+```
+
+CommandLineRunner
+---
+
+CommandLineRunner interface in Spring Boot provides an option 
+to run a specific piece of code when the application is fully started.
+
+This interface called automatically by the Spring Boot after the initial bootstrapping of application.
+
+```
+public class AppCommandRunner implements CommandLineRunner {
+
+	@Autowired
+	PersonRepository repo;
+	
+    @Override
+    public void run(String... args) throws Exception {
+    	List<Person> personList = repo.findAll();
+		personList.forEach(person -> {
+			System.out.println("person:" + person);
+		});
+				
+	}
+}
+
+```
 
 **OUPUT**
 
